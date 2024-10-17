@@ -29,7 +29,7 @@ function TodoInputForm({ onSubmit }) {
             type="text"
             value={input}
             onChange={(e) => setInput(e.target.value)}
-            placeholder="Add a todo"
+            placeholder="Add a task to complete"
             mr={2}
             width="100%"
           />
