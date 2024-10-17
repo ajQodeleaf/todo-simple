@@ -1,17 +1,17 @@
-import { createContext, useContext, useState } from "react";
+import { createContext, useContext } from "react";
+import { useColorMode } from "@chakra-ui/react";
 
 const ThemeContext = createContext();
 
 export function ThemeProvider({ children }) {
-  const [theme, setTheme] = useState("light");
+  const { colorMode, toggleColorMode } = useColorMode();
 
   const toggleTheme = () => {
-    console.log("Theme set to:- ", theme);
-    setTheme((prevTheme) => (prevTheme === "light" ? "dark" : "light"));
+    toggleColorMode();
   };
 
   return (
-    <ThemeContext.Provider value={{ theme, toggleTheme }}>
+    <ThemeContext.Provider value={{ theme: colorMode, toggleTheme }}>
       {children}
     </ThemeContext.Provider>
   );
