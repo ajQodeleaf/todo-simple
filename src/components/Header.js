@@ -2,75 +2,84 @@
 import {
   Box,
   Flex,
-  Button,
-  IconButton,
   Stack,
   useColorModeValue,
+  IconButton,
+  Text,
 } from "@chakra-ui/react";
-import { SunIcon, MoonIcon } from "@chakra-ui/icons";
+import { MoonIcon, SunIcon } from "@chakra-ui/icons";
+import { useTheme } from "@/context/themeContext";
+import { useContext } from "react";
+import { AuthContext } from "@/context/userAuthenticationContext";
+import { useRouter, usePathname } from "next/navigation";
 import { Logo } from "./Logo";
-import { useRouter } from "next/navigation";
-import { useTheme } from "../context/themeContext";
+import { FiLogOut, FiLogIn } from "react-icons/fi";
 
-export default function Header() {
+const Header = () => {
   const { theme, toggleTheme } = useTheme();
+  const { logout } = useContext(AuthContext);
   const router = useRouter();
-  return (
-    <Box>
-      <Flex
-        bg={useColorModeValue("white", "gray.800")}
-        color={useColorModeValue("gray.600", "white")}
-        minH={"60px"}
-        py={{ base: 2 }}
-        px={{ base: 4 }}
-        borderBottom={1}
-        borderStyle={"solid"}
-        borderColor={useColorModeValue("gray.200", "gray.900")}
-        align={"center"}
-      >
-        <Flex flex={{ base: 1 }} justify={{ base: "center", md: "start" }}>
-          <Logo />
-        </Flex>
+  const pathname = usePathname();
 
-        <Stack
-          flex={{ base: 1, md: 0 }}
-          justify={"flex-end"}
-          direction={"row"}
-          spacing={6}
+  const isWelcomePage = pathname === "/";
+  const isHomePage = pathname === "/home";
+
+  const handleLogout = () => {
+    logout();
+    router.push("/");
+  };
+
+  return (
+    <Box bg={useColorModeValue("gray.100", "gray.900")} px={4}>
+      <Flex h={16} alignItems={"center"} justifyContent={"space-between"}>
+        {!isHomePage && <Logo />}
+
+        <Text
+          fontSize="2xl"
+          fontWeight="extrabold"
+          textAlign="center"
+          fontStyle="italic"
+          ml={isHomePage ? "72px" : "0px"}
+          lineHeight="1.2"
+          flexGrow={1}
         >
-          <IconButton
-            aria-label="Toggle theme"
-            icon={theme === "light" ? <MoonIcon /> : <SunIcon />}
-            onClick={toggleTheme}
-            variant="outline"
-            size="md"
-            isRound
-          />
-          <Button
-            as={"a"}
-            fontSize={"sm"}
-            fontWeight={400}
-            variant={"link"}
-            onClick={() => router.push("/sign-in")}
-          >
-            Sign In
-          </Button>
-          <Button
-            as={"a"}
-            display={{ base: "none", md: "inline-flex" }}
-            fontSize={"sm"}
-            fontWeight={600}
-            color={"white"}
-            bg={"pink.400"}
-            onClick={() => router.push("/sign-up")}
-            _hover={{
-              bg: "pink.300",
-            }}
-          >
-            Sign Up
-          </Button>
-        </Stack>
+          Todo App
+        </Text>
+
+        <Flex alignItems={"center"}>
+          <Stack direction={"row"} spacing={7}>
+            <IconButton
+              icon={theme === "light" ? <MoonIcon /> : <SunIcon />}
+              aria-label="Theme Switch"
+              onClick={toggleTheme}
+              variant="outline"
+              borderRadius="50%"
+              boxShadow="sm"
+            />
+            {isWelcomePage ? (
+              <IconButton
+                icon={<FiLogIn />}
+                aria-label="Login"
+                onClick={handleLogout}
+                variant="outline"
+                borderRadius="50%"
+                boxShadow="sm"
+              />
+            ) : (
+              <IconButton
+                icon={<FiLogOut />}
+                aria-label="Logout"
+                onClick={handleLogout}
+                variant="outline"
+                borderRadius="50%"
+                boxShadow="sm"
+              />
+            )}
+          </Stack>
+        </Flex>
       </Flex>
     </Box>
   );
-}
+};
+
+export default Header;
