@@ -2,7 +2,6 @@ import { CheckIcon, DeleteIcon } from "@chakra-ui/icons";
 import {
   CircularProgress,
   CircularProgressLabel,
-  ListItem,
   Box,
   IconButton,
   Text,
@@ -16,6 +15,8 @@ function TodoItem({ todo, onToggle, onRemove, onUpdateTimer }) {
   );
 
   useEffect(() => {
+    if (todo.status === TodoStatus.COMPLETED) return;
+
     const interval = setInterval(() => {
       setTimeLeft((prevTimeLeft) => {
         const newTimeLeft = Math.max(0, prevTimeLeft - 1);
@@ -25,7 +26,7 @@ function TodoItem({ todo, onToggle, onRemove, onUpdateTimer }) {
     }, 1000);
 
     return () => clearInterval(interval);
-  }, [todo.id, onUpdateTimer]);
+  }, [todo.id, onUpdateTimer, todo.status]);
 
   const progress = Math.min(
     (1 - timeLeft / ((todo.endTime - todo.startTime) / 1000)) * 100,
@@ -33,67 +34,77 @@ function TodoItem({ todo, onToggle, onRemove, onUpdateTimer }) {
   );
 
   return (
-    <ListItem
+    <Box
       display="flex"
       alignItems="center"
+      justifyContent="space-between"
       p={3}
-      m={4}
-      borderWidth="1px"
-      borderRadius="md"
+      my={2}
+      boxShadow="sm"
+      borderRadius="3xl"
       bg={
         todo.status === TodoStatus.COMPLETED
           ? "green.100"
           : todo.status === TodoStatus.DELAYED
           ? "red.100"
-          : "yellow.100"
+          : "yellow.50"
       }
+      _hover={{
+        bg: todo.status === TodoStatus.COMPLETED ? "green.50" : "gray.50",
+        boxShadow: "md",
+      }}
+      transition="box-shadow 0.2s ease-in-out, background-color 0.2s ease-in-out"
+      border="1px solid"
+      borderColor={
+        todo.status === TodoStatus.COMPLETED ? "green.50" : "gray.50"
+      }
+      minH="60px"
     >
-      <Box
-        display="contents"
-        alignItems="center"
-        justifyContent="space-between"
-      >
-        <Box flex="1" color={"black"}>
-          <Text>{todo.text}</Text>
-        </Box>
+      <Box flex="1" display="flex" alignItems="center">
+        <Text
+          color="black"
+          fontWeight={todo.status === TodoStatus.COMPLETED ? "bold" : "normal"}
+          fontSize="md"
+          isTruncated
+        >
+          {todo.text}
+        </Text>
+      </Box>
 
-        <Box display="flex" alignItems="center">
-          {todo.status !== TodoStatus.DELAYED && (
-            <CircularProgress
-              value={progress}
-              color="green"
-              trackColor="green.200"
-              size="32px"
-              mr={2}
-            >
-              <CircularProgressLabel color={"black"}>
-                {Math.floor(timeLeft / 60)}:
-                {("0" + Math.floor(timeLeft % 60)).slice(-2)}
-              </CircularProgressLabel>
-            </CircularProgress>
-          )}
+      <Box display="flex" alignItems="center">
+        {todo.status === TodoStatus.ACTIVE && (
+          <CircularProgress
+            value={progress}
+            color="green"
+            trackColor="green.200"
+            size="32px"
+            mr={3}
+          >
+            <CircularProgressLabel color="black">
+              {Math.floor(timeLeft / 60)}:
+              {("0" + Math.floor(timeLeft % 60)).slice(-2)}
+            </CircularProgressLabel>
+          </CircularProgress>
+        )}
 
-          {todo.status !== TodoStatus.DELAYED && (
-            <IconButton
-              icon={<CheckIcon />}
-              colorScheme={
-                todo.status === TodoStatus.COMPLETED ? "blue" : "green"
-              }
-              onClick={onToggle}
-              mr={2}
-              size="sm"
-            />
-          )}
-
+        {todo.status === TodoStatus.ACTIVE && (
           <IconButton
-            icon={<DeleteIcon />}
-            colorScheme="red"
-            onClick={onRemove}
+            icon={<CheckIcon />}
+            colorScheme="green"
+            onClick={onToggle}
+            mr={2}
             size="sm"
           />
-        </Box>
+        )}
+
+        <IconButton
+          icon={<DeleteIcon />}
+          colorScheme="red"
+          onClick={onRemove}
+          size="sm"
+        />
       </Box>
-    </ListItem>
+    </Box>
   );
 }
 

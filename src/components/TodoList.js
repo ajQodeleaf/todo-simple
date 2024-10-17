@@ -1,79 +1,48 @@
-import {
-  Grid,
-  Box,
-  Heading,
-  List,
-} from "@chakra-ui/react";
-import TodoItem from "../components/TodoItem";
+import { Grid } from "@chakra-ui/react";
 import { TodoStatus } from "../constants/todoStatus";
+import TaskStatusSection from "./TaskStatusSection";
 
 function TodoList({ todos, onToggle, onRemove, onUpdateTimer }) {
   const activeTodos = todos.filter((todo) => todo.status === TodoStatus.ACTIVE);
-  
   const completedTodos = todos.filter(
     (todo) => todo.status === TodoStatus.COMPLETED
   );
-  const delayedTodos = todos.filter(
-    (todo) => todo.status === TodoStatus.DELAYED
-  );
+  const delayedTodos = todos.filter((todo) => todo.status === TodoStatus.DELAYED);
 
   return (
     <Grid
-      templateColumns="repeat(3, 1fr)"
+      templateColumns="repeat(auto-fit, minmax(250px, 1fr))"
       w="100%"
-      minH="100vh"
       gap={8}
       px={4}
       py={16}
     >
-      <Box bg="yellow.300" borderRadius={"2xl"}>
-        <Heading size="md" fontWeight='bold' m={4} textAlign="center">
-          Active Todos
-        </Heading>
-        <List spacing={3}>
-          {activeTodos.map((todo) => (
-            <TodoItem
-              key={todo.id}
-              todo={todo}
-              onToggle={() => onToggle(todo.id)}
-              onRemove={() => onRemove(todo.id)}
-              onUpdateTimer={onUpdateTimer}
-            />
-          ))}
-        </List>
-      </Box>
-      <Box bg="green.300" borderRadius={"2xl"}>
-        <Heading size="md" m={4} textAlign="center">
-          Complete Todos
-        </Heading>
-        <List spacing={3}>
-          {completedTodos.map((todo) => (
-            <TodoItem
-              key={todo.id}
-              todo={todo}
-              onToggle={() => onToggle(todo.id)}
-              onRemove={() => onRemove(todo.id)}
-              onUpdateTimer={onUpdateTimer}
-            />
-          ))}
-        </List>
-      </Box>
-      <Box bg="red.300" borderRadius={"2xl"}>
-        <Heading size="md" m={4} textAlign="center">
-          Delayed Todos
-        </Heading>
-        <List spacing={3}>
-          {delayedTodos.map((todo) => (
-            <TodoItem
-              key={todo.id}
-              todo={todo}
-              onToggle={() => onToggle(todo.id)}
-              onRemove={() => onRemove(todo.id)}
-              onUpdateTimer={onUpdateTimer}
-            />
-          ))}
-        </List>
-      </Box>
+      <TaskStatusSection
+        todos={activeTodos}
+        statusTitle="Active Todos"
+        bgColor="yellow.100"
+        onToggle={onToggle}
+        onRemove={onRemove}
+        onUpdateTimer={onUpdateTimer}
+      />
+
+      <TaskStatusSection
+        todos={completedTodos}
+        statusTitle="Completed Todos"
+        bgColor="green.100"
+        onToggle={onToggle}
+        onRemove={onRemove}
+        onUpdateTimer={onUpdateTimer}
+      />
+
+      <TaskStatusSection
+        todos={delayedTodos}
+        statusTitle="Delayed Todos"
+        bgColor="red.100"
+        onToggle={onToggle}
+        onRemove={onRemove}
+        onUpdateTimer={onUpdateTimer}
+      />
     </Grid>
   );
 }
