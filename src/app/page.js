@@ -1,77 +1,65 @@
 "use client";
-import { Box, Text } from "@chakra-ui/react";
-import React, { useState } from "react";
-import TodoInputForm from "../components/TodoInputForm";
-import TodoList from "../components/TodoList";
-import { TodoStatus } from "../constants/todoStatus";
+import Header from "@/components/Header";
+import Footer from "@/components/Footer";
+import {
+  Box,
+  Heading,
+  Text,
+  Button,
+  VStack,
+  HStack,
+  Image,
+} from "@chakra-ui/react";
+import { useRouter } from "next/navigation";
+import { useTheme } from "@/context/themeContext";
 
-export default function Home() {
-  const [todos, setTodos] = useState([]);
-
-  const handleAddTodo = (input) => {
-    const newTodo = {
-      id: Date.now(),
-      text: input.text,
-      status: TodoStatus.ACTIVE,
-      startTime: Date.now(),
-      endTime: Date.now() + input.timer * 60 * 1000,
-    };
-    setTodos([...todos, newTodo]);
-  };
-
-  const handleToggleTodo = (id) => {
-    setTodos((prevTodos) =>
-      prevTodos.map((todo) =>
-        todo.id === id
-          ? {
-              ...todo,
-              status:
-                todo.status === TodoStatus.COMPLETED
-                  ? TodoStatus.ACTIVE
-                  : TodoStatus.COMPLETED,
-            }
-          : todo
-      )
-    );
-  };
-
-  const handleRemoveTodo = (id) => {
-    setTodos((prevTodos) => prevTodos.filter((todo) => todo.id !== id));
-  };
-
-  const handleUpdateTimer = (id, newTime) => {
-    setTodos((prevTodos) =>
-      prevTodos.map((todo) => {
-        if (todo.id === id) {
-          if (newTime <= 0 && todo.status === TodoStatus.ACTIVE) {
-            return { ...todo, status: TodoStatus.DELAYED, endTime: 0 };
-          }
-          return { ...todo, endTime: Date.now() + newTime * 1000 };
-        }
-        return todo;
-      })
-    );
-  };
-
+export default function WelcomePage() {
+  const { theme } = useTheme();
+  const router = useRouter();
+  console.log("Theme:", theme);
   return (
-    <Box px={4} py={4}>
-      <Text
-        fontSize="2xl"
-        fontWeight="extrabold"
-        mb={5}
-        textAlign="center"
-        fontStyle="italic"
-      >
-        Todo App
-      </Text>
+    <>
+      <Header />
+      <main>
+        <Box
+          h="81vh"
+          display="flex"
+          justifyContent="center"
+          alignItems="center"
+          p={8}
+          bg={theme === "light" ? "#fff" : "#333"}
+        >
+          <HStack spacing={16} alignItems="center" maxW="1200px" mt={20}>
+            <VStack align="start" spacing={12}>
+              <Heading as="h1" size="3xl" fontWeight="bold">
+                Stay Organized <br />
+                Stay Creative
+              </Heading>
+              <Text fontSize="lg" color="gray.600">
+                Join millions of people to capture ideas, organize life, and do
+                something creative every day.
+              </Text>
+              <HStack spacing={4}>
+                <Button
+                  colorScheme="blue"
+                  size="lg"
+                  onClick={() => router.push("/sign-up")}
+                >
+                  Get Started - It&apos;s Free
+                </Button>
+              </HStack>
+            </VStack>
 
-      <TodoInputForm onSubmit={handleAddTodo} />
-      <TodoList
-        todos={todos}
-        onToggle={handleToggleTodo}
-        onRemove={handleRemoveTodo}
-        onUpdateTimer={handleUpdateTimer}
-      />
-    </Box>
+            <Image
+              src="/header.png"
+              alt="To-Do App Illustration"
+              maxW="400px"
+              objectFit="contain"
+            />
+          </HStack>
+        </Box>
+      </main>
+      <Footer />
+    </>
   );
 }
