@@ -54,17 +54,7 @@ export default function Home() {
   };
 
   return (
-    <Box px={4} py={4}>
-      <Text
-        fontSize="2xl"
-        fontWeight="extrabold"
-        mb={5}
-        textAlign="center"
-        fontStyle="italic"
-      >
-        Todo App
-      </Text>
-
+    <Box width="100%" px={32} py={4}>
       <TodoInputForm onSubmit={handleAddTodo} />
       <TodoList
         todos={todos}
