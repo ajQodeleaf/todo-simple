@@ -9,14 +9,13 @@ import {
   VStack,
   HStack,
   Image,
+  useColorModeValue,
 } from "@chakra-ui/react";
 import { useRouter } from "next/navigation";
-import { useTheme } from "@/context/themeContext";
 
 export default function WelcomePage() {
-  const { theme } = useTheme();
   const router = useRouter();
-  console.log("Theme:", theme);
+
   return (
     <>
       <Header />
@@ -27,7 +26,7 @@ export default function WelcomePage() {
           justifyContent="center"
           alignItems="center"
           p={8}
-          bg={theme === "light" ? "#fff" : "#333"}
+          bg={useColorModeValue("gray.100", "gray.900")}
         >
           <HStack spacing={16} alignItems="center" maxW="1200px" mt={20}>
             <VStack align="start" spacing={12}>
